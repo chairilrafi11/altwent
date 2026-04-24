@@ -1,8 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,94 +6,115 @@ datasource db {
   provider = "postgresql"
 }
 
+/// User profile with nostalgic memories
 model User {
-  id          String   @id @default(uuid())
-  name        String
-  nickname    String?
-  bio         String?
-  zodiac      String?
-  hobby       String?
-  favoriteFood String?
-  location    String?
+  id             String   @id @default(uuid())
+  name           String
+  nickname       String?  /// Fun nickname or alias
+  bio            String?  /// Personal bio
+  zodiac         String?  /// Zodiac sign
+  hobby          String?  /// Favorite hobby
+  favoriteFood   String?  /// Favorite food
+  location       String?  /// Current location
+  
+  /// Photos from then & now
+  photoNow       String?  /// Current photo URL
+  photoThen      String?  /// SMP era photo URL
+  
+  /// Personal story
+  personalQuote  String?  /// Memory or quote for friends
 
-  photoNow    String? // foto sekarang
-  photoThen   String? // foto SMP
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  /// Relations
+  photos         Photo[]
+  messages       Message[]
+  albumParticipants AlbumParticipant[]
 
-  photos      Photo[]
-  messages    Message[]
-  albums      AlbumParticipant[]
+  @@index([createdAt])
 }
 
+/// Photo model linked to users and albums
 model Photo {
-  id        String   @id @default(uuid())
-  url       String
-  caption   String?
+  id             String   @id @default(uuid())
+  url            String   /// Supabase storage URL
+  caption        String?
+  
+  /// Photo owner
+  userId         String?
+  user           User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
 
-  userId    String?
-  user      User?    @relation(fields: [userId], references: [id])
+  createdAt      DateTime @default(now())
 
-  createdAt DateTime @default(now())
+  /// Relations
+  albums         AlbumPhoto[]
 
-  albums    AlbumPhoto[]
+  @@index([userId])
+  @@index([createdAt])
 }
 
+/// Album (event/memory collection)
 model Album {
-  id          String   @id @default(uuid())
-  title       String
-  description String?
-  eventDate   DateTime?
+  id             String   @id @default(uuid())
+  title          String
+  description    String?  /// Story about this event
+  eventDate      DateTime?
+  
+  /// Cover image
+  coverImage     String?  /// Supabase storage URL
 
-  coverImage  String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
-  createdAt   DateTime @default(now())
+  /// Relations
+  photos         AlbumPhoto[]
+  participants   AlbumParticipant[]
 
-  photos      AlbumPhoto[]
-  participants AlbumParticipant[]
+  @@index([createdAt])
+  @@index([eventDate])
 }
 
+/// Junction table: Album photos
 model AlbumPhoto {
-  id        String @id @default(uuid())
+  id             String   @id @default(uuid())
 
-  albumId   String
-  photoId   String
+  albumId        String
+  photoId        String
 
-  album     Album  @relation(fields: [albumId], references: [id])
-  photo     Photo  @relation(fields: [photoId], references: [id])
+  album          Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  photo          Photo    @relation(fields: [photoId], references: [id], onDelete: Cascade)
 
   @@unique([albumId, photoId])
+  @@index([albumId])
+  @@index([photoId])
 }
 
+/// Junction table: Album participants
 model AlbumParticipant {
-  id      String @id @default(uuid())
+  id             String   @id @default(uuid())
 
-  albumId String
-  userId  String
+  albumId        String
+  userId         String
 
-  album   Album @relation(fields: [albumId], references: [id])
-  user    User  @relation(fields: [userId], references: [id])
+  album          Album    @relation(fields: [albumId], references: [id], onDelete: Cascade)
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([albumId, userId])
+  @@index([albumId])
+  @@index([userId])
 }
 
+/// Personal messages for friends
 model Message {
-  id        String   @id @default(uuid())
-  content   String
+  id             String   @id @default(uuid())
+  content        String
+  
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
-  userId    String
-  user      User     @relation(fields: [userId], references: [id])
+  createdAt      DateTime @default(now())
 
-  createdAt DateTime @default(now())
-}
-
-model Reaction {
-  id        String   @id @default(uuid())
-  emoji     String   // ❤️ 😂 😭
-
-  photoId   String?
-  albumId   String?
-
-  createdAt DateTime @default(now())
+  @@index([userId])
+  @@index([createdAt])
 }
