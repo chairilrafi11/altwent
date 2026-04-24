@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id          String   @id @default(uuid())
+  name        String
+  nickname    String?
+  bio         String?
+  zodiac      String?
+  hobby       String?
+  favoriteFood String?
+  location    String?
+
+  photoNow    String? // foto sekarang
+  photoThen   String? // foto SMP
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  photos      Photo[]
+  messages    Message[]
+  albums      AlbumParticipant[]
+}
+
+model Photo {
+  id        String   @id @default(uuid())
+  url       String
+  caption   String?
+
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  albums    AlbumPhoto[]
+}
+
+model Album {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  eventDate   DateTime?
+
+  coverImage  String?
+
+  createdAt   DateTime @default(now())
+
+  photos      AlbumPhoto[]
+  participants AlbumParticipant[]
+}
+
+model AlbumPhoto {
+  id        String @id @default(uuid())
+
+  albumId   String
+  photoId   String
+
+  album     Album  @relation(fields: [albumId], references: [id])
+  photo     Photo  @relation(fields: [photoId], references: [id])
+
+  @@unique([albumId, photoId])
+}
+
+model AlbumParticipant {
+  id      String @id @default(uuid())
+
+  albumId String
+  userId  String
+
+  album   Album @relation(fields: [albumId], references: [id])
+  user    User  @relation(fields: [userId], references: [id])
+
+  @@unique([albumId, userId])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
+
+model Reaction {
+  id        String   @id @default(uuid())
+  emoji     String   // ❤️ 😂 😭
+
+  photoId   String?
+  albumId   String?
+
+  createdAt DateTime @default(now())
+}
