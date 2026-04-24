@@ -2,21 +2,8 @@
 
 import { motion } from 'framer-motion';
 import { PersonCard } from '@/components/nostalgic';
+import type { User } from '@/types';
 import { useEffect, useState } from 'react';
-
-interface User {
-  id: string;
-  name: string;
-  nickname?: string;
-  photoNow?: string;
-  photoThen?: string;
-  location?: string;
-  zodiac?: string;
-  hobby?: string;
-  bio?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-}
 
 export default function PeoplePage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -58,49 +45,7 @@ export default function PeoplePage() {
     },
   };
 
-  // Mock data for demonstration
-  const mockUsers = [
-    {
-      id: '1',
-      name: 'Chairil',
-      nickname: 'The Storyteller',
-      photoNow: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=400&fit=crop',
-      location: 'Jakarta',
-      zodiac: '♏',
-      hobby: 'Photography',
-      bio: 'Capturing moments through a lens',
-    },
-    {
-      id: '2',
-      name: 'Rara',
-      nickname: 'Forever Cheerful',
-      photoNow: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=400&h=400&fit=crop',
-      location: 'Bandung',
-      zodiac: '♌',
-      hobby: 'Singing',
-      bio: 'Spreading joy wherever I go',
-    },
-    {
-      id: '3',
-      name: 'Dita',
-      nickname: 'The Adventurer',
-      photoNow: 'https://images.unsplash.com/photo-1517070213202-1e1b37765cbd?w=400&h=400&fit=crop',
-      location: 'Surabaya',
-      zodiac: '♐',
-      hobby: 'Traveling',
-      bio: 'Always seeking new adventures',
-    },
-    {
-      id: '4',
-      name: 'Aisya',
-      nickname: 'The Artist',
-      photoNow: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=400&h=400&fit=crop',
-      location: 'Yogyakarta',
-      zodiac: '♎',
-      hobby: 'Drawing',
-      bio: 'Creating beauty through art',
-    },
-  ];
+  const displayUsers = users.length > 0 ? users : [];
 
   return (
     <div className="min-h-screen px-4 py-20">
@@ -127,7 +72,7 @@ export default function PeoplePage() {
           initial="hidden"
           animate="visible"
         >
-          {mockUsers.map((user, index) => (
+          {displayUsers.map((user, index) => (
             <motion.div key={user.id} variants={itemVariants}>
               <PersonCard user={user} />
             </motion.div>

@@ -3,45 +3,34 @@
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { NostalgicButton } from '@/components/nostalgic';
+import { SpotifyCard } from '@/components/spotify-card';
 import { ArrowLeft, Heart, MapPin, Sparkles } from 'lucide-react';
 import Link from 'next/link';
-import { useState, use } from 'react';
-
-interface ProfilePageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
+import { useState, use, useEffect } from 'react';
+import type { ProfilePageProps, UserWithRelations } from '@/types';
 
 export default function ProfilePage({ params }: ProfilePageProps) {
   const { id } = use(params);
   const [likes, setLikes] = useState(0);
+  const [profile, setProfile] = useState<UserWithRelations | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock data - in real app this would come from DB
-  const profile = {
-    id: id,
-    name: 'Chairil',
-    nickname: 'The Storyteller',
-    bio: 'Photography enthusiast, coffee lover, eternal optimist',
-    zodiac: 'Scorpio ♏',
-    hobby: 'Photography',
-    favoriteFood: 'Nasi Goreng',
-    location: 'Jakarta, Indonesia',
-    photoThen:
-      'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=600&h=600&fit=crop',
-    photoNow:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=600&fit=crop',
-    personalQuote:
-      'Ten years ago, I never imagined how much our friendship would mean to me today. Thank you for all the memories.',
-    message:
-      'To all my best friends: Thank you for being the constant in my life. Here\'s to 10 more years of adventures, laughter, and countless more memories together. I love you guys.',
-    gallery: [
-      'https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=400&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=400&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=400&h=400&fit=crop',
-      'https://images.unsplash.com/photo-1519225421980-715cb0215aed?w=400&h=400&fit=crop',
-    ],
-  };
+  useEffect(() => {
+    const fetchProfile = async () => {
+      try {
+        const response = await fetch(`/api/users/${id}`);
+        if (!response.ok) throw new Error('Failed to fetch');
+        const data = await response.json();
+        setProfile(data);
+      } catch (error) {
+        console.error('Failed to fetch profile:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProfile();
+  }, [id]);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -62,6 +51,30 @@ export default function ProfilePage({ params }: ProfilePageProps) {
       transition: { type: 'spring', stiffness: 100, damping: 20 },
     },
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="mt-4 text-gray-600">Loading profile...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (!profile) {
+    return (
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <p className="text-xl text-gray-600 mb-6">Profile not found.</p>
+        <Link href="/people">
+          <NostalgicButton variant="primary" size="md">
+            Back to People
+          </NostalgicButton>
+        </Link>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen py-20 px-4">
@@ -101,40 +114,44 @@ export default function ProfilePage({ params }: ProfilePageProps) {
             className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12"
           >
             {/* Then */}
-            <div className="group relative rounded-2xl overflow-hidden shadow-xl">
-              <div className="aspect-square relative">
-                <Image
-                  src={profile.photoThen}
-                  alt="Then - 2016"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <p className="text-sm font-semibold">2016</p>
-                  <p className="text-xs opacity-80">The Beginning</p>
+            {profile.photoThen && (
+              <div className="group relative rounded-2xl overflow-hidden shadow-xl">
+                <div className="aspect-square relative">
+                  <Image
+                    src={profile.photoThen}
+                    alt="Then - 2016"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <p className="text-sm font-semibold">2016</p>
+                    <p className="text-xs opacity-80">The Beginning</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
 
             {/* Now */}
-            <div className="group relative rounded-2xl overflow-hidden shadow-xl">
-              <div className="aspect-square relative">
-                <Image
-                  src={profile.photoNow}
-                  alt="Now - 2026"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <p className="text-sm font-semibold">2026</p>
-                  <p className="text-xs opacity-80">Still Growing</p>
+            {profile.photoNow && (
+              <div className="group relative rounded-2xl overflow-hidden shadow-xl">
+                <div className="aspect-square relative">
+                  <Image
+                    src={profile.photoNow}
+                    alt="Now - 2026"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 100vw, 50vw"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                  <div className="absolute bottom-4 left-4 text-white">
+                    <p className="text-sm font-semibold">2026</p>
+                    <p className="text-xs opacity-80">Still Growing</p>
+                  </div>
                 </div>
               </div>
-            </div>
+            )}
           </motion.div>
 
           {/* Info Grid */}
@@ -175,40 +192,42 @@ export default function ProfilePage({ params }: ProfilePageProps) {
           >
             <Sparkles className="absolute top-4 right-4 w-6 h-6 text-accent opacity-50" />
             <p className="text-center text-lg md:text-xl text-foreground font-semibold leading-relaxed">
-              {profile.personalQuote}
+              {profile.personalQuote || 'A cherished friend in our memories'}
             </p>
           </motion.div>
 
-          {/* Message for Friends */}
-          <motion.div variants={itemVariants} className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4">💌 Message for Friends</h2>
-            <div className="p-6 rounded-2xl bg-white/60 backdrop-blur-md border-2 border-purple-200">
-              <p className="text-gray-700 leading-relaxed">{profile.message}</p>
-            </div>
-          </motion.div>
+          {/* Spotify Track */}
+          <SpotifyCard spotifyTrackUrl={profile.spotifyTrackUrl} />
 
           {/* Photo Gallery */}
-          <motion.div variants={itemVariants} className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-800 mb-6">📸 Gallery</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {profile.gallery.map((photo, idx) => (
-                <motion.div
-                  key={idx}
-                  className="relative aspect-square rounded-xl overflow-hidden shadow-lg group cursor-pointer"
-                  whileHover={{ scale: 1.05 }}
-                >
-                  <Image
-                    src={photo}
-                    alt={`Gallery ${idx}`}
-                    fill
-                    className="object-cover group-hover:scale-110 transition-transform duration-300"
-                    sizes="(max-width: 768px) 50vw, 25vw"
-                  />
-                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
+          {profile.photos && profile.photos.length > 0 && (
+            <motion.div variants={itemVariants} className="mb-12">
+              <h2 className="text-2xl font-bold text-gray-800 mb-6">📸 Gallery</h2>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {profile.photos.map((photo, idx) => (
+                  <motion.div
+                    key={photo.id}
+                    className="relative aspect-square rounded-xl overflow-hidden shadow-lg group cursor-pointer"
+                    whileHover={{ scale: 1.05 }}
+                  >
+                    <Image
+                      src={photo.url}
+                      alt={photo.caption || `Photo ${idx}`}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-300"
+                      sizes="(max-width: 768px) 50vw, 25vw"
+                    />
+                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300" />
+                    {photo.caption && (
+                      <div className="absolute bottom-0 left-0 right-0 bg-black/60 text-white p-2 text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+                        {photo.caption}
+                      </div>
+                    )}
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          )}
 
           {/* Action Buttons */}
           <motion.div

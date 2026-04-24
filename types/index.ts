@@ -13,6 +13,7 @@ export interface User {
   photoNow?: string;
   photoThen?: string;
   personalQuote?: string;
+  spotifyTrackUrl?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -33,6 +34,8 @@ export interface Album {
   coverImage?: string;
   createdAt?: Date;
   updatedAt?: Date;
+  photos?: AlbumPhoto[];
+  participants?: UserAlbumParticipant[];
 }
 
 export interface Message {
@@ -75,4 +78,78 @@ export interface NostalgicUITheme {
   secondary: string;
   accent: string;
   background: string;
+}
+
+// Extended types for pages
+export interface UserWithRelations extends User {
+  photos?: Photo[];
+  messages?: Message[];
+  albumParticipants?: AlbumParticipantWithAlbum[];
+}
+
+export interface AlbumParticipantWithAlbum extends UserAlbumParticipant {
+  album?: Album;
+}
+
+// Component Props
+export interface NostalgicButtonProps extends React.PropsWithChildren {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  onClick?: () => void;
+  disabled?: boolean;
+  className?: string;
+}
+
+export interface ProfilePageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+export interface AlbumDetailPageProps {
+  params: Promise<{
+    id: string;
+  }>;
+}
+
+// UI Configuration Types
+export interface NavigationCard {
+  title: string;
+  description: string;
+  href: string;
+  emoji: string;
+}
+
+export interface TimelineEvent {
+  year: number;
+  title: string;
+  description: string;
+  emoji: string;
+}
+
+export interface PolaroidCardProps {
+  image: string;
+  caption?: string;
+  rotation?: number;
+  alt?: string;
+  onClick?: () => void;
+  hoverImage?: string;
+  layoutId?: string;
+}
+
+export interface PersonCardProps {
+  user: User;
+}
+
+export interface NavbarProps {
+  className?: string;
+}
+
+export interface AlbumCardProps {
+  id: string;
+  title: string;
+  description?: string;
+  coverImage?: string;
+  eventDate?: Date;
+  participantCount?: number;
 }

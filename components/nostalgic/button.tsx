@@ -2,14 +2,7 @@
 
 import { motion, MotionProps } from 'framer-motion';
 import React from 'react';
-
-interface NostalgicButtonProps extends React.PropsWithChildren {
-  variant?: 'primary' | 'secondary' | 'ghost';
-  size?: 'sm' | 'md' | 'lg';
-  onClick?: () => void;
-  disabled?: boolean;
-  className?: string;
-}
+import type { NostalgicButtonProps } from '@/types';
 
 const variantStyles = {
   primary:

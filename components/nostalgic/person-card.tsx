@@ -3,20 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-
-interface User {
-  id: string;
-  name: string;
-  nickname?: string;
-  photoNow?: string;
-  location?: string;
-  zodiac?: string;
-  hobby?: string;
-}
-
-interface PersonCardProps {
-  user: User;
-}
+import type { User, PersonCardProps } from '@/types';
 
 export function PersonCard({ user }: PersonCardProps) {
   return (

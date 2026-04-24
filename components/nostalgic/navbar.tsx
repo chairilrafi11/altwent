@@ -2,10 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-
-interface NavbarProps {
-  className?: string;
-}
+import type { NavbarProps } from '@/types';
 
 export function NostalgicNavbar({ className = '' }: NavbarProps) {
   const navItems = [

@@ -23,6 +23,9 @@ model User {
   
   /// Personal story
   personalQuote  String?  /// Memory or quote for friends
+  
+  /// Spotify integration
+  spotifyTrackUrl String?  /// Spotify embed track URL
 
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

@@ -3,85 +3,75 @@
 import { motion } from 'framer-motion';
 import Link from 'next/link';
 import { NostalgicButton } from '@/components/nostalgic';
+import type { TimelineEvent } from '@/types';
 
 export default function TimelinePage() {
-  const timelineEvents = [
+  const timelineEvents: TimelineEvent[] = [
     {
       year: 2016,
       title: 'The Beginning',
       description: 'We met at SMP and became inseparable',
       emoji: '🎓',
-      color: 'from-purple-400',
     },
     {
       year: 2017,
       title: 'Growing Stronger',
       description: 'First year of real friendship bonds forming',
       emoji: '💪',
-      color: 'from-pink-400',
     },
     {
       year: 2018,
       title: 'High School Days',
       description: 'The golden years of teenage adventures',
       emoji: '🎉',
-      color: 'from-blue-400',
     },
     {
       year: 2019,
       title: 'Senior Year',
       description: 'Making the most of our last year together',
       emoji: '📚',
-      color: 'from-yellow-400',
     },
     {
       year: 2020,
       title: 'University & New Paths',
       description: 'Separated by distance but not by heart',
       emoji: '🎓',
-      color: 'from-green-400',
     },
     {
       year: 2021,
       title: 'Staying Connected',
       description: 'Video calls and late night chats',
       emoji: '💬',
-      color: 'from-indigo-400',
     },
     {
       year: 2022,
       title: 'Bali Adventure',
       description: 'Epic summer trip with the whole crew',
       emoji: '✈️',
-      color: 'from-red-400',
     },
     {
       year: 2023,
       title: 'Growing Up',
       description: 'New jobs, new challenges, same friends',
       emoji: '🚀',
-      color: 'from-orange-400',
     },
     {
       year: 2024,
       title: 'Reunion',
       description: 'Finally back together in one place',
       emoji: '🎊',
-      color: 'from-cyan-400',
     },
     {
       year: 2025,
       title: 'Stronger Than Ever',
       description: 'Reflecting on our incredible journey',
       emoji: '❤️',
-      color: 'from-rose-400',
     },
     {
       year: 2026,
       title: '10 Years Later',
       description: 'A decade of memories, laughter & love',
       emoji: '🌟',
-      color: 'from-purple-500',
     },
   ];
 
@@ -131,7 +121,7 @@ export default function TimelinePage() {
           animate="visible"
         >
           {/* Center line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-gradient-to-b from-primary via-accent to-primary transform -translate-x-1/2" />
+          <div className="absolute left-1/2 top-0 bottom-0 w-1 bg-primary transform -translate-x-1/2" />
 
           {/* Timeline items */}
           <div className="space-y-12">
@@ -144,24 +134,24 @@ export default function TimelinePage() {
                 {/* Content */}
                 <div className="flex-1">
                   <motion.div
-                    className={`p-6 rounded-2xl bg-gradient-to-br ${event.color}/10 border-2 border-${event.color.split('-')[1]}-200 hover:shadow-lg transition-shadow`}
+                    className="p-6 rounded-2xl bg-secondary border border-border hover:shadow-lg transition-shadow"
                     whileHover={{ scale: 1.02 }}
                   >
                     <div className="flex items-center gap-3 mb-2">
                       <span className="text-3xl">{event.emoji}</span>
-                      <h3 className="text-2xl font-bold text-gray-800">{event.year}</h3>
+                      <h3 className="text-2xl font-bold text-foreground">{event.year}</h3>
                     </div>
-                    <h4 className="text-lg font-semibold text-gray-700 mb-2">
+                    <h4 className="text-lg font-semibold text-foreground mb-2">
                       {event.title}
                     </h4>
-                    <p className="text-gray-600 text-sm">{event.description}</p>
+                    <p className="text-muted-foreground text-sm">{event.description}</p>
                   </motion.div>
                 </div>
 
                 {/* Timeline dot */}
                 <div className="flex justify-center">
                   <motion.div
-                    className={`w-6 h-6 rounded-full bg-gradient-to-r ${event.color} to-${event.color.split('-')[1]}-300 border-4 border-white shadow-md`}
+                    className="w-6 h-6 rounded-full bg-primary border-4 border-background shadow-md"
                     whileHover={{ scale: 1.3 }}
                     transition={{ type: 'spring', stiffness: 300, damping: 30 }}
                   />

@@ -6,64 +6,23 @@ import { useEffect, useState } from 'react';
 
 export default function AlbumsPage() {
   const [albums, setAlbums] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // Mock albums data
-  const mockAlbums = [
-    {
-      id: '1',
-      title: 'SMP Days - 2016',
-      description: 'Where it all began. Our first moments together as a friend group.',
-      eventDate: new Date('2016-06-15'),
-      coverImage:
-        'https://images.unsplash.com/photo-1523580494863-6f3031224c94?w=600&h=600&fit=crop',
-      participantCount: 4,
-    },
-    {
-      id: '2',
-      title: 'High School Adventures',
-      description: 'The golden years of laughter, growth, and unforgettable moments.',
-      eventDate: new Date('2018-09-10'),
-      coverImage:
-        'https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=600&h=600&fit=crop',
-      participantCount: 4,
-    },
-    {
-      id: '3',
-      title: 'College Chaos',
-      description: 'Navigating university life together, making new memories in new places.',
-      eventDate: new Date('2020-03-20'),
-      coverImage:
-        'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?w=600&h=600&fit=crop',
-      participantCount: 4,
-    },
-    {
-      id: '4',
-      title: 'Summer Trip 2022',
-      description: 'A week-long adventure to bali. Sun, sea, and sisterhood.',
-      eventDate: new Date('2022-07-01'),
-      coverImage:
-        'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&h=600&fit=crop',
-      participantCount: 4,
-    },
-    {
-      id: '5',
-      title: 'Reunion 2024',
-      description: 'After years apart, we finally got together again. The connection was instant.',
-      eventDate: new Date('2024-12-25'),
-      coverImage:
-        'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=600&h=600&fit=crop',
-      participantCount: 4,
-    },
-    {
-      id: '6',
-      title: '10 Year Celebration',
-      description: 'A decade of friendship worth celebrating. Here\'s to forever.',
-      eventDate: new Date('2026-06-15'),
-      coverImage:
-        'https://images.unsplash.com/photo-1511379938547-c1f69b13d835?w=600&h=600&fit=crop',
-      participantCount: 4,
-    },
-  ];
+  useEffect(() => {
+    const fetchAlbums = async () => {
+      try {
+        const response = await fetch('/api/albums');
+        const data = await response.json();
+        setAlbums(data);
+      } catch (error) {
+        console.error('Failed to fetch albums:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchAlbums();
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -114,25 +73,38 @@ export default function AlbumsPage() {
         </motion.div>
 
         {/* Albums Grid */}
-        <motion.div
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-        >
-          {mockAlbums.map((album) => (
-            <motion.div key={album.id} variants={itemVariants}>
-              <AlbumCard
-                id={album.id}
-                title={album.title}
-                description={album.description}
-                coverImage={album.coverImage}
-                eventDate={album.eventDate}
-                participantCount={album.participantCount}
-              />
-            </motion.div>
-          ))}
-        </motion.div>
+        {isLoading ? (
+          <div className="flex justify-center items-center min-h-[400px]">
+            <div className="text-center">
+              <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+              <p className="mt-4 text-gray-600">Loading albums...</p>
+            </div>
+          </div>
+        ) : albums.length === 0 ? (
+          <div className="text-center py-20">
+            <p className="text-gray-600 text-lg">No albums found</p>
+          </div>
+        ) : (
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+          >
+            {albums.map((album) => (
+              <motion.div key={album.id} variants={itemVariants}>
+                <AlbumCard
+                  id={album.id}
+                  title={album.title}
+                  description={album.description}
+                  coverImage={album.coverImage}
+                  eventDate={album.eventDate}
+                  participantCount={album.participants?.length || 0}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )}
 
         {/* Coming Soon Info */}
         <motion.div

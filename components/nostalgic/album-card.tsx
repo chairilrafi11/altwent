@@ -4,15 +4,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-
-interface AlbumCardProps {
-  id: string;
-  title: string;
-  description?: string;
-  coverImage?: string;
-  eventDate?: Date;
-  participantCount?: number;
-}
+import type { AlbumCardProps } from '@/types';
 
 export function AlbumCard({
   id,

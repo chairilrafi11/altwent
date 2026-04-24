@@ -3,16 +3,7 @@
 import Image from 'next/image';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-
-interface PolaroidCardProps {
-  image: string;
-  caption?: string;
-  rotation?: number;
-  alt?: string;
-  onClick?: () => void;
-  hoverImage?: string;
-  layoutId?: string;
-}
+import type { PolaroidCardProps } from '@/types';
 
 export function PolaroidCard({
   image,
