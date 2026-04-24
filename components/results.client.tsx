@@ -2,20 +2,13 @@
 
 import type { ListBlobResult } from "@vercel/blob";
 import {
-  ArrowLeftIcon,
-  FileIcon,
   ImageIcon,
   ImageUpIcon,
-  Loader2Icon,
   UploadIcon,
+  FileIcon,
 } from "lucide-react";
-import { useActionState, useEffect } from "react";
-import { toast } from "sonner";
-import { search } from "@/app/actions/search";
 import { Preview } from "./preview";
-import { Button } from "./ui/button";
 import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "./ui/empty";
-import { Input } from "./ui/input";
 import { UploadButton } from "./upload-button";
 import { useUploadedImages } from "./uploaded-images-provider";
 
@@ -27,22 +20,8 @@ const PRIORITY_COUNT = 12;
 
 export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
   const { images } = useUploadedImages();
-  const [state, formAction, isPending] = useActionState(search, { data: [] });
 
-  useEffect(() => {
-    if ("error" in state) {
-      toast.error(state.error);
-    }
-  }, [state]);
-
-  const reset = () => {
-    window.location.reload();
-  };
-
-  const hasImages =
-    images.length ||
-    defaultData.length ||
-    ("data" in state && state.data?.length);
+  const hasImages = images.length || defaultData.length;
 
   return (
     <>
@@ -55,21 +34,13 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
               url={image.url}
             />
           ))}
-          {"data" in state && state.data?.length
-            ? state.data.map((blob, index) => (
-                <Preview
-                  key={blob.url}
-                  priority={index < PRIORITY_COUNT}
-                  url={blob.url}
-                />
-              ))
-            : defaultData.map((blob, index) => (
-                <Preview
-                  key={blob.url}
-                  priority={index < PRIORITY_COUNT}
-                  url={blob.downloadUrl}
-                />
-              ))}
+          {defaultData.map((blob, index) => (
+            <Preview
+              key={blob.url}
+              priority={index < PRIORITY_COUNT}
+              url={blob.downloadUrl}
+            />
+          ))}
         </div>
       ) : (
         <Empty className="h-full min-h-[50vh] rounded-lg border">
@@ -95,38 +66,9 @@ export const ResultsClient = ({ defaultData }: ResultsClientProps) => {
         </Empty>
       )}
 
-      <form
-        action={formAction}
-        className="-translate-x-1/2 fixed bottom-8 left-1/2 flex w-full max-w-sm items-center gap-1 rounded-full bg-background p-1 shadow-xl sm:max-w-lg lg:ml-[182px]"
-      >
-        {"data" in state && state.data.length > 0 && (
-          <Button
-            className="shrink-0 rounded-full"
-            disabled={isPending}
-            onClick={reset}
-            size="icon"
-            type="button"
-            variant="ghost"
-          >
-            <ArrowLeftIcon className="size-4" />
-          </Button>
-        )}
-        <Input
-          className="w-full rounded-full border-none bg-secondary shadow-none outline-none"
-          disabled={isPending || !hasImages}
-          id="search"
-          name="search"
-          placeholder="Search by description"
-          required
-        />
-        {isPending ? (
-          <Button className="shrink-0" disabled size="icon" variant="ghost">
-            <Loader2Icon className="size-4 animate-spin" />
-          </Button>
-        ) : (
-          <UploadButton />
-        )}
-      </form>
+      <div className="fixed bottom-8 left-1/2 -translate-x-1/2 flex w-full max-w-sm justify-center sm:max-w-lg lg:ml-[182px]">
+        <UploadButton />
+      </div>
     </>
   );
 };

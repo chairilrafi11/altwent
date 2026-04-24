@@ -2,7 +2,6 @@
 
 import { FatalError } from "workflow";
 import { generateDescription } from "./generate-description";
-import { indexImage } from "./index-image";
 import { uploadImage } from "./upload-image";
 
 type SerializableFile = {
@@ -35,16 +34,11 @@ export const processImage = async (fileData: SerializableFile) => {
     );
 
     // Step 2: Generate description using AI
-    console.log("[WORKFLOW] Step 2/3: Generating description");
+    console.log("[WORKFLOW] Step 2/2: Generating description");
     const text = await generateDescription(blob);
     console.log(
-      `[WORKFLOW] Step 2/3 complete. Generated ${text.length} characters`
+      `[WORKFLOW] Step 2/2 complete. Generated ${text.length} characters`
     );
-
-    // Step 3: Index in search with metadata
-    console.log("[WORKFLOW] Step 3/3: Indexing in search");
-    await indexImage(blob, text);
-    console.log("[WORKFLOW] Step 3/3 complete. Image indexed successfully");
 
     const workflowDuration = Date.now() - workflowStartTime;
     console.log(
