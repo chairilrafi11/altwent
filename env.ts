@@ -15,21 +15,13 @@ export const env = {
   // From Blob Storage Integration (optional)
   BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN || "",
 
-  // From Upstash Search Integration (optional)
-  UPSTASH_SEARCH_REST_READONLY_TOKEN:
-    process.env.UPSTASH_SEARCH_REST_READONLY_TOKEN || "",
-  UPSTASH_SEARCH_REST_TOKEN:
-    process.env.UPSTASH_SEARCH_REST_TOKEN || "",
-  UPSTASH_SEARCH_REST_URL:
-    process.env.UPSTASH_SEARCH_REST_URL || "",
+
 };
 
 // Warn if optional env vars are missing in production
 if (process.env.NODE_ENV === "production") {
   const optionalVars = [
     "BLOB_READ_WRITE_TOKEN",
-    "UPSTASH_SEARCH_REST_TOKEN",
-    "UPSTASH_SEARCH_REST_URL",
   ];
 
   for (const key of optionalVars) {
