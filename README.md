@@ -1,4 +1,4 @@
-# Vectr
+# Vectr 
 
 **Vectr** is an AI-powered image search application template that automatically generates descriptions for uploaded images and indexes them for semantic search.
 
